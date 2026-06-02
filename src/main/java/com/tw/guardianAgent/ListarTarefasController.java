@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 class Tarefa{
     UUID id;
@@ -41,15 +42,24 @@ class Tarefa{
 @RestController
 public class ListarTarefasController {
 
+
     @GetMapping("/tarefas")
-    public List<Tarefa> getTarefas(){
+    public List<Tarefa> getTarefas() {
+        CompletableFuture<String> prioridadeFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(10000);
+                return "Prioridade alta";
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        String prioridade = prioridadeFuture.join();
+
       return List.of(
-              new Tarefa("Trabalhar", "Atender cliente", new Date("2026/05/29")),
+              new Tarefa("Trabalhar", "Atender cliente" + prioridade, new Date("2026/05/29")),
               new Tarefa("Almoçar", "Com amigos", new Date("2026/05/29")),
               new Tarefa("Passear", "Com o cachorro", new Date("2026/05/29"))
       );
-
-
     }
-
 }
