@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 class Tarefa{
     UUID id;
@@ -52,7 +53,7 @@ public class ListarTarefasController {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }).completeOnTimeout("Prioridade nao informada", 2, TimeUnit.SECONDS);
 
         String prioridade = prioridadeFuture.join();
 
