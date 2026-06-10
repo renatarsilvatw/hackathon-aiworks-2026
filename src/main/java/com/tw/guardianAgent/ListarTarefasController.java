@@ -63,14 +63,13 @@ public class ListarTarefasController {
             }
         });
 
-        String prioridade = prioridadeFuture.join();
-        String resumo = buscarResumoExterno();
+        CompletableFuture<String> resumoFuture = CompletableFuture.supplyAsync(this::buscarResumoExterno);
 
-        return List.of(
+        return prioridadeFuture.thenCombine(resumoFuture, (prioridade, resumo) -> List.of(
                 new Tarefa("Trabalhar", "Atender cliente com " + prioridade + " - " + resumo, new Date("2026/05/29")),
                 new Tarefa("Almoçar", "Com amigos", new Date("2026/05/29")),
                 new Tarefa("Passear", "Com o cachorro", new Date("2026/05/29"))
-        );
+        )).join();
     }
 
     private String buscarResumoExterno() {
